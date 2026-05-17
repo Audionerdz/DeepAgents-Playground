@@ -1,0 +1,14 @@
+[project]
+name = "deep-agents-notebook"
+version = "0.1.0"
+description = "Add a short description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "chromadb>=1.5.9",
+    "copilotkit>=0.1.89",
+    "deepagents>=0.6.1",
+    "langchain-chroma>=1.1.0",
+    "langchain-ollama>=1.1.0",
+    "langchain-openai>=1.2.1",
+]

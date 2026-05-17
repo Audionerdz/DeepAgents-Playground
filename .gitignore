@@ -1,0 +1,16 @@
+
+# LangGraph API
+.langgraph_api
+
+# Local environment
+.env
+
+# Python virtualenv
+.venv/
+
+# Node / Next build outputs
+frontend/.next/
+node_modules/
+
+# Jupyter
+.ipynb_checkpoints/
