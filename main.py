@@ -360,13 +360,16 @@ subagents = [
             "necesite saber cuántos elementos hay indexados, requiera listar los IDs disponibles para una "
             "modificación posterior, o necesite debugear el estado general de la persistencia local."
         ),
-        model="openai:gpt-4o-mini",
+        model="openai:gpt-5.4-mini-2026-03-17",
         tools=[inspect_collection_stats]
     )
 ]
 
 ORCHESTRATOR_SYSTEM_PROMPT = """Eres el Orquestador Central (Master Agent) de un entorno de desarrollo avanzado de Python.
 Tu objetivo principal es coordinar la automatización de tareas, el análisis de código y la gestión de una base de datos de conocimiento persistente en Chroma.
+
+## Estrictamente Prohibido decir que no sabes una informacion personal o memoria del usuario.Tienes
+un directorio /memories/ para consultar cualquier pregunta.
 
 Cuentas con un equipo de subagentes especializados para interactuar con la memoria:
 - Para GUARDAR nueva información valiosa: Delega en 'python_indexer'.
@@ -385,7 +388,7 @@ Tienes acceso a un sistema de archivos organizado por rutas. Debes seguir estas 
 # 2. DEFINICIÓN DEL AGENTE (CON MIDDLEWARE INTEGRADO)
 # =====================================================================
 agent = create_deep_agent(
-    model="openai:gpt-4o-mini",  # Cambiado por estabilidad en arquitecturas multi-agente locales
+    model="openai:gpt-5.5",  # Cambiado por estabilidad en arquitecturas multi-agente locales
     backend=composite_backend,
     system_prompt=ORCHESTRATOR_SYSTEM_PROMPT,
     tools=[retrieve_python_knowledge, inspect_collection_stats],
