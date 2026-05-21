@@ -307,7 +307,7 @@ subagents = [
             "en categorías lógicas (ej. 'exploits', 'network', 'decorators', 'async') para "
             "optimizar búsquedas futuras."
         ),
-        model="openai:gpt-4o-mini",
+        model="openai:gpt-5.4-nano",
         tools=[index_python_chunk]
     ),
     SubAgent(
@@ -323,7 +323,7 @@ subagents = [
             "ejecutar una herramienta. Si una herramienta falla, reporta el error exacto. "
             "Si el orquestador te da una categoría, úsala para filtrar la búsqueda."
         ),
-        model="openai:gpt-4o-mini",
+        model="openai:gpt-5.4-nano",
         tools=[retrieve_python_knowledge, inspect_collection_stats]
     ),
     SubAgent(
@@ -336,7 +336,7 @@ subagents = [
             "un fragmento de código, cuando cambie el estado de un payload (ej. de 'testing' a 'stable'), "
             "o cuando necesites añadir nuevas etiquetas a un ID específico."
         ),
-        model="openai:gpt-4o-mini",
+        model="openai:gpt-5.4-nano",
         tools=[update_or_upsert_knowledge]
     ),
     SubAgent(
@@ -348,7 +348,7 @@ subagents = [
             "Puedes purgar elementos proporcionando una lista explícita de IDs o aplicando un filtro por "
             "metadatos (ej. borrar una categoría de pruebas obsoleta). Sé preciso para no eliminar información útil."
         ),
-        model="openai:gpt-4o-mini",
+        model="openai:gpt-5.4-nano",
         tools=[delete_python_knowledge]
     ),
     SubAgent(
@@ -360,7 +360,7 @@ subagents = [
             "necesite saber cuántos elementos hay indexados, requiera listar los IDs disponibles para una "
             "modificación posterior, o necesite debugear el estado general de la persistencia local."
         ),
-        model="openai:gpt-5.4-mini-2026-03-17",
+        model="openai:gpt-5.4-nano",
         tools=[inspect_collection_stats]
     )
 ]
@@ -388,7 +388,7 @@ Tienes acceso a un sistema de archivos organizado por rutas. Debes seguir estas 
 # 2. DEFINICIÓN DEL AGENTE (CON MIDDLEWARE INTEGRADO)
 # =====================================================================
 agent = create_deep_agent(
-    model="openai:gpt-5.5",  # Cambiado por estabilidad en arquitecturas multi-agente locales
+    model="openai:gpt-5.4-nano",  # Cambiado por estabilidad en arquitecturas multi-agente locales
     backend=composite_backend,
     system_prompt=ORCHESTRATOR_SYSTEM_PROMPT,
     tools=[retrieve_python_knowledge, inspect_collection_stats],

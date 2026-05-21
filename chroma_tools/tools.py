@@ -6,14 +6,14 @@ from typing import Any, Dict, List, Optional
 from langchain_chroma import Chroma
 from langchain_core.documents import Document
 from langchain_core.tools import tool
-from langchain_openai import OpenAIEmbeddings
+from langchain_ollama import OllamaEmbeddings
 
 # --- Inicialización perezosa interna ---
-_embeddings: Optional[OpenAIEmbeddings] = None
+_embeddings: Optional[OllamaEmbeddings] = None
 _vector_store: Optional[Chroma] = None
 
 
-def ensure_vector_store() -> tuple[OpenAIEmbeddings, Chroma]:
+def ensure_vector_store() -> tuple[OllamaEmbeddings, Chroma]:
     """Inicializa y devuelve (embeddings, vector_store).
 
     Lanza RuntimeError con un mensaje claro si la inicialización de la
@@ -24,11 +24,9 @@ def ensure_vector_store() -> tuple[OpenAIEmbeddings, Chroma]:
         return _embeddings, _vector_store
 
     try:
-        _embeddings = OpenAIEmbeddings(
-            model=os.getenv("EMBEDDINGS_MODEL", "text-embedding-3-small"),
-            base_url=os.getenv("EMBEDDINGS_BASE_URL"),
-            api_key=os.getenv("EMBEDDINGS_API_KEY") or os.getenv("OPENAI_API_KEY"),
-            check_embedding_ctx_length=False,
+        _embeddings = OllamaEmbeddings(
+            model=os.getenv("EMBEDDINGS_MODEL", "qwen3-embedding:latest"),
+            base_url=os.getenv("OLLAMA_BASE_URL", "http://localhost:11434"),
         )
 
         _vector_store = Chroma(

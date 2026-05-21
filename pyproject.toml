@@ -12,6 +12,8 @@ dependencies = [
     "langchain-chroma>=1.1.0",
     "langchain-ollama>=1.1.0",
     "langchain-openai>=1.2.1",
+    "langgraph-api>=0.8.7",
+    "langgraph-cli>=0.4.26",
 ]
 
 [tool.uv.sources]
