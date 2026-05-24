@@ -20,11 +20,12 @@
 </p>
 
 <p align="center">
-  <strong>YAML-driven multi-agent orchestration</strong> — ChromaDB RAG, Gmail automation via Zapier MCP, and a composite Postgres + Filesystem backend. Built on LangGraph + deepagents.
+  <strong>YAML-driven multi-agent orchestration</strong> — ChromaDB RAG, Gmail automation via Zapier MCP, and a composite Postgres + Filesystem backend.<br>
+  Powered by <a href="https://github.com/DiTo97/deepagents">Deep Agents</a> + <a href="https://github.com/DiTo97/deepagents-ui">Deep Agents UI</a>.
 </p>
 
 <p align="center">
-  <code>docker compose up</code> · <a href="#-quick-start">Quick Start</a> · <a href="./ARCHITECTURE.md">Architecture</a> · <a href="./GUIDE.md">Guide</a>
+  <code>docker compose up</code> · <a href="#-quick-start">Quick Start</a> · <a href="./ARCHITECTURE.md">Architecture</a> · <a href="./GUIDE.md">Guide</a> · <a href="https://github.com/DiTo97/deepagents">Deep Agents</a> · <a href="https://github.com/DiTo97/deepagents-ui">Deep Agents UI</a>
 </p>
 
 ---
