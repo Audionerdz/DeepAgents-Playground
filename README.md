@@ -133,42 +133,42 @@ The frontend connects automatically — no manual setup.
 
 | Tool | Description |
 |------|-------------|
-| `index_python_chunk` | Indexa un chunk de código en ChromaDB con embedding vía Ollama |
-| `retrieve_python_knowledge` | Búsqueda semántica sobre la base de conocimiento Python |
-| `update_or_upsert_knowledge` | Actualiza o inserta un documento existente en ChromaDB |
-| `delete_python_knowledge` | Elimina documentos por ID o filtro |
-| `inspect_collection_stats` | Inspecciona estadísticas de la colección ChromaDB |
+| `index_python_chunk` | Index a code chunk into ChromaDB with Ollama embeddings |
+| `retrieve_python_knowledge` | Semantic search over the Python knowledge base |
+| `update_or_upsert_knowledge` | Update or insert an existing document in ChromaDB |
+| `delete_python_knowledge` | Delete documents by ID or filter |
+| `inspect_collection_stats` | Inspect ChromaDB collection statistics |
 
 ### MCP Servers
 
 #### Zapier MCP — Gmail
 
-| Tool | Acción |
+| Tool | Action |
 |------|--------|
-| `execute_zapier_read_action` | Leer emails, attachments (search, get by ID) |
-| `execute_zapier_write_action` | Enviar, eliminar, archivar, drafts, labels, replies |
-| `list_enabled_zapier_actions` | Listar acciones disponibles para una app |
+| `execute_zapier_read_action` | Read emails, attachments (search, get by ID) |
+| `execute_zapier_write_action` | Send, delete, archive, drafts, labels, replies |
+| `list_enabled_zapier_actions` | List available actions for an app |
 
 #### Obsidian MCP — Vault
 
-| Tool | Descripción |
+| Tool | Description |
 |------|-------------|
-| `vault_list` | Listar archivos y directorios en el vault |
-| `vault_read` | Leer contenido, frontmatter y tags de una nota |
-| `vault_write` | Crear o sobrescribir una nota |
-| `vault_append` | Añadir contenido al final de una nota |
-| `vault_patch` | Parchar un heading, block o frontmatter |
-| `vault_delete` | Eliminar un archivo del vault |
-| `vault_move` | Mover/renombrar un archivo |
-| `vault_get_document_map` | Listar headings, blocks y frontmatter fields |
-| `active_file_get_path` | Obtener la ruta del archivo abierto en Obsidian |
-| `periodic_note_get_path` | Obtener ruta de nota diaria/semanal/mensual |
-| `search_simple` | Búsqueda de texto completo en todas las notas |
-| `search_query` | Búsqueda estructurada con JsonLogic sobre metadata |
-| `tag_list` | Listar todos los tags del vault |
-| `command_list` | Listar todos los comandos registrados en Obsidian |
-| `command_execute` | Ejecutar un comando de Obsidian por ID |
-| `open_file` | Abrir un archivo en la UI de Obsidian |
+| `vault_list` | List files and directories in the vault |
+| `vault_read` | Read file content, frontmatter, and tags |
+| `vault_write` | Create or overwrite a vault note |
+| `vault_append` | Append content to the end of a note |
+| `vault_patch` | Patch a heading, block, or frontmatter |
+| `vault_delete` | Delete a file from the vault |
+| `vault_move` | Move or rename a vault file |
+| `vault_get_document_map` | List headings, blocks, and frontmatter fields |
+| `active_file_get_path` | Get vault path of the currently open file |
+| `periodic_note_get_path` | Get daily/weekly/monthly note path |
+| `search_simple` | Full-text search across all notes |
+| `search_query` | Structured JsonLogic search against metadata |
+| `tag_list` | List all tags in the vault |
+| `command_list` | List all registered Obsidian commands |
+| `command_execute` | Execute an Obsidian command by ID |
+| `open_file` | Open a file in the Obsidian UI |
 
 ---
 
