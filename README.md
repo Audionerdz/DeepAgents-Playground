@@ -9,6 +9,17 @@
 
 <blockquote>
   <strong>⚡ YAML-driven multi-agent playground</strong> — swap backends, tools, prompts, subagents, and orchestrators without touching Python.
+  <br><br>
+  El objetivo es convertir este repositorio en un <strong>banco de referencia</strong> para construir miles de aplicaciones DeepAgents para diferentes casos de uso. Aquí encuentras:
+  <br><br>
+  <strong>🧰 Tools</strong> — funciones con el formato correcto <code>@tool</code> de LangChain listas para usar<br>
+  <strong>🤖 SubAgents</strong> — pre-construidos con prompts, tools y modelos asignados<br>
+  <strong>🗄️ Backends</strong> — implementaciones de storage (Postgres, Filesystem, S3, State)<br>
+  <strong>⚙️ Configuraciones</strong> — listas YAML pre-construidas para orchestrators, subagents y MCP servers<br>
+  <strong>📓 Notebooks</strong> — ejemplos prácticos de DeepAgents para aprendizaje rápido<br>
+  <strong>🔌 MCP Servers</strong> — integraciones listas para conectar (Zapier, Obsidian, y más)
+  <br><br>
+  Todo basado en la librería <a href="https://github.com/DiTo97/deepagents">Deep Agents</a> de LangGraph.
 </blockquote>
 
 <p align="center">
@@ -113,6 +124,51 @@ The frontend connects automatically — no manual setup.
 ```
 
 **Stack:** Python 3.12 · LangGraph · ChromaDB · Ollama · PostgreSQL · Next.js · Zapier MCP · Obsidian MCP
+
+---
+
+## 🧰 Current Tools & MCPs
+
+### Static Tools (LangChain `@tool`)
+
+| Tool | Description |
+|------|-------------|
+| `index_python_chunk` | Indexa un chunk de código en ChromaDB con embedding vía Ollama |
+| `retrieve_python_knowledge` | Búsqueda semántica sobre la base de conocimiento Python |
+| `update_or_upsert_knowledge` | Actualiza o inserta un documento existente en ChromaDB |
+| `delete_python_knowledge` | Elimina documentos por ID o filtro |
+| `inspect_collection_stats` | Inspecciona estadísticas de la colección ChromaDB |
+
+### MCP Servers
+
+#### Zapier MCP — Gmail
+
+| Tool | Acción |
+|------|--------|
+| `execute_zapier_read_action` | Leer emails, attachments (search, get by ID) |
+| `execute_zapier_write_action` | Enviar, eliminar, archivar, drafts, labels, replies |
+| `list_enabled_zapier_actions` | Listar acciones disponibles para una app |
+
+#### Obsidian MCP — Vault
+
+| Tool | Descripción |
+|------|-------------|
+| `vault_list` | Listar archivos y directorios en el vault |
+| `vault_read` | Leer contenido, frontmatter y tags de una nota |
+| `vault_write` | Crear o sobrescribir una nota |
+| `vault_append` | Añadir contenido al final de una nota |
+| `vault_patch` | Parchar un heading, block o frontmatter |
+| `vault_delete` | Eliminar un archivo del vault |
+| `vault_move` | Mover/renombrar un archivo |
+| `vault_get_document_map` | Listar headings, blocks y frontmatter fields |
+| `active_file_get_path` | Obtener la ruta del archivo abierto en Obsidian |
+| `periodic_note_get_path` | Obtener ruta de nota diaria/semanal/mensual |
+| `search_simple` | Búsqueda de texto completo en todas las notas |
+| `search_query` | Búsqueda estructurada con JsonLogic sobre metadata |
+| `tag_list` | Listar todos los tags del vault |
+| `command_list` | Listar todos los comandos registrados en Obsidian |
+| `command_execute` | Ejecutar un comando de Obsidian por ID |
+| `open_file` | Abrir un archivo en la UI de Obsidian |
 
 ---
 
