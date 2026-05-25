@@ -178,4 +178,4 @@ uv run python -m compileall main.py src
 
 ---
 
-<p align="center">MIT · Built with <a href="https://github.com/DiTo97/deepagents">Deep Agents</a> + <a href="https://github.com/DiTo97/deepagents-ui">Deep Agents UI</a> · <a href="https://docs.astral.sh/uv/">uv</a></p>
+<p align="center">MIT · Powered by <a href="https://github.com/DiTo97/deepagents">Deep Agents</a> + <a href="https://langchain-ai.github.io/langgraph/">LangGraph</a> + <a href="https://github.com/DiTo97/deepagents-ui">Deep Agents UI</a> · <a href="https://docs.astral.sh/uv/">uv</a></p>
