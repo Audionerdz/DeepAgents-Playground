@@ -14,14 +14,19 @@ DeepAgents-Playground/
 │
 ├── src/agentbankz/
 │   │
-│   ├── agents/                          # ██ ORCHESTRATOR & SUBAGENT SYSTEM ██
+│   ├── orchestrators/                   # ██ ORCHESTRATOR SYSTEM ██
 │   │   ├── __init__.py                  #   Exports: OrchestratorFactory
-│   │   ├── defaults.yml           #   YAML: default model config
-│   ├── subagents.yml          #   YAML: declarative subagent definitions
-│   ├── orchestrators.yml      #   YAML: orchestrator definitions (refs subagents)
 │   │   ├── orchestrator_factory.py      #   Factory: reads YAML → create_deep_agent()
+│   │   ├── defaults.yml                 #   YAML: default model config
+│   │   ├── orchestrators.yml            #   YAML: orchestrator definitions (refs subagents)
+│   │   └── subagents.yml                #   YAML: declarative subagent definitions
+│   │
+│   ├── subagents/                       # ██ SUBAGENT SYSTEM ██
+│   │   ├── __init__.py                  #   Exports: build_mcp_subagents, usage guides
 │   │   ├── loader.py                    #   Resolver: YAML config → SubAgent objects
-│   │   └── gmail.py                     #   Builder: generates SubAgents from Zapier MCP tools
+│   │   ├── mcp_builder.py               #   Generic MCP SubAgent builder
+│   │   ├── gmail.py                     #   Gmail usage guide constant
+│   │   └── obsidian.py                  #   Obsidian usage guide constant
 │   │
 │   ├── backends/                        # ██ STORAGE BACKENDS ██
 │   │   ├── __init__.py                  #   Exports: BackendFactory
@@ -29,8 +34,11 @@ DeepAgents-Playground/
 │   │   └── postgres.py                  #   SyncPostgresBackend implementation
 │   │
 │   └── tools/                           # ██ TOOL IMPLEMENTATIONS ██
+│       ├── __init__.py
 │       ├── knowledge.py                 #   5 RAG tools (index, retrieve, update, delete, inspect)
-│       └── zapier.py                     #   MCP client + adapter (create_zapier_tools)
+│       ├── mcp_adapter.py               #   MCP-to-LangChain adapter (MCPConnectionConfig, MCPToolAdapter)
+│       ├── obsidian.py                  #   Obsidian MCP tool factory
+│       └── zapier.py                    #   Zapier MCP tool factory
 │
 ├── data/                                # Runtime data (gitignored)
 │   ├── chroma_db/                       #   ChromaDB persistent vector store
@@ -197,7 +205,7 @@ def my_new_tool(param: str) -> str:
 
 ### Step 2: Register in the tool map
 
-In `agents/loader.py`, add to `STATIC_TOOL_MAP`:
+In `subagents/loader.py`, add to `STATIC_TOOL_MAP`:
 
 ```python
 STATIC_TOOL_MAP = {
@@ -208,7 +216,7 @@ STATIC_TOOL_MAP = {
 
 ### Step 3: Define the subagent in YAML
 
-In `agents/subagents.yml`:
+In `orchestrators/subagents.yml`:
 
 ```yaml
 subagents:
@@ -222,7 +230,7 @@ subagents:
 
 ### Step 4: Wire into an orchestrator
 
-In the orchestrator's `subagents:` list in `agents/orchestrators.yml`:
+In the orchestrator's `subagents:` list in `orchestrators/orchestrators.yml`:
 
 ```yaml
 orchestrators:
@@ -239,7 +247,7 @@ For tools that are discovered at runtime (like MCP connections).
 
 ### Step 1: Create a builder function
 
-Following the pattern in `agents/gmail.py`:
+Following the pattern in `subagents/gmail.py`:
 
 ```python
 def build_slack_subagents(slack_tools: list, model: str) -> list[SubAgent]:
@@ -258,7 +266,7 @@ def build_slack_subagents(slack_tools: list, model: str) -> list[SubAgent]:
 
 ### Step 2: Register in the YAML
 
-In `agents/subagents.yml`:
+In `orchestrators/subagents.yml`:
 
 ```yaml
 subagents:
@@ -269,7 +277,7 @@ subagents:
 
 ### Step 3: Handle in the loader
 
-In `agents/loader.py`, add a branch in `build_all_subagents()`:
+In `subagents/loader.py`, add a branch in `build_all_subagents()`:
 
 ```python
 elif source == "dynamic:slack":
@@ -402,15 +410,15 @@ def cached_zapier_call(action: str, params: tuple) -> Any:
 
 ## 9. Configuration Reference
 
-The config is split across **3 files** under `agents/`. The loader merges them automatically:
+The config is split across **3 files** under `orchestrators/`. The loader merges them automatically:
 
-### `agents/defaults.yml`
+### `orchestrators/defaults.yml`
 
 ```yaml
 model: str                                    # Default model for all subagents
 ```
 
-### `agents/subagents.yml`
+### `orchestrators/subagents.yml`
 
 ```yaml
 subagents:                                     # SubAgent definitions
@@ -422,7 +430,7 @@ subagents:                                     # SubAgent definitions
     model?: str                                # Optional model override
 ```
 
-### `agents/orchestrators.yml`
+### `orchestrators/orchestrators.yml`
 
 ```yaml
 orchestrators:                                 # Orchestrator definitions
@@ -452,14 +460,14 @@ If `defaults.yml` or `subagents.yml` are missing, `load_agent_configs()` falls b
 | File | Purpose | Touched when |
 |---|---|---|
 | `main.py` | Entry point (7 lines) | Never (architectural glue) |
-| `agents/defaults.yml` | Default model config | Changing the default LLM model |
-| `agents/subagents.yml` | SubAgent definitions | Adding/removing subagents |
-| `agents/orchestrators.yml` | Orchestrator definitions | Adding/removing orchestrators |
-| `agents/loader.py` | YAML → SubAgent resolution | Adding new `source:` types |
-| `agents/orchestrator_factory.py` | `create_deep_agent()` from config | Adding new orchestrator features |
-| `agents/gmail.py` | Gmail usage guide | Changing Gmail MCP prompts |
-| `agents/obsidian.py` | Obsidian usage guide | Changing Obsidian MCP prompts |
-| `agents/mcp_builder.py` | Generic MCP SubAgent builder | Changing how MCP subagents are generated |
+| `orchestrators/defaults.yml` | Default model config | Changing the default LLM model |
+| `orchestrators/subagents.yml` | SubAgent definitions | Adding/removing subagents |
+| `orchestrators/orchestrators.yml` | Orchestrator definitions | Adding/removing orchestrators |
+| `orchestrators/orchestrator_factory.py` | `create_deep_agent()` from config | Adding new orchestrator features |
+| `subagents/loader.py` | YAML → SubAgent resolution | Adding new `source:` types |
+| `subagents/gmail.py` | Gmail usage guide | Changing Gmail MCP prompts |
+| `subagents/obsidian.py` | Obsidian usage guide | Changing Obsidian MCP prompts |
+| `subagents/mcp_builder.py` | Generic MCP SubAgent builder | Changing how MCP subagents are generated |
 | `backends/factory.py` | Backend construction | Adding new storage backends |
 | `backends/postgres.py` | PostgreSQL backend | Changing PG behavior |
 | `tools/knowledge.py` | ChromaDB tool functions | Adding/modifying RAG tools |

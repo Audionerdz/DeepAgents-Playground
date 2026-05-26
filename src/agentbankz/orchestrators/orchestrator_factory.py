@@ -4,7 +4,7 @@ from typing import Any
 from deepagents import create_deep_agent
 from deepagents.middleware.subagents import SubAgent
 
-from .loader import (
+from agentbankz.subagents.loader import (
     STATIC_TOOL_MAP,
     build_all_subagents,
     load_agent_configs,

@@ -24,7 +24,7 @@
 
 ## 1. How the YAML Config Works
 
-The configuration is split across **3 files** under `src/agentbankz/agents/`. The loader merges them automatically at startup.
+The configuration is split across **3 files** under `src/agentbankz/orchestrators/`. The loader merges them automatically at startup.
 
 ### `defaults.yml` — Global defaults
 
@@ -70,7 +70,7 @@ orchestrators:
 `load_agent_configs()` in `loader.py` loads all 3 files and merges them into a single dict:
 
 ```python
-cfg = load_agent_configs("agents/")
+cfg = load_agent_configs("src/agentbankz/orchestrators")
 # Result:
 # {
 #   "model": "openai:gpt-5.4-nano",
@@ -114,7 +114,7 @@ def count_python_knowledge() -> str:
 
 **Step 2: Register it in the tool map**
 
-In `src/agentbankz/agents/loader.py`, add to `STATIC_TOOL_MAP`:
+In `src/agentbankz/subagents/loader.py`, add to `STATIC_TOOL_MAP`:
 
 ```python
 from agentbankz.tools.knowledge import (
@@ -164,7 +164,7 @@ def summarize_knowledge(query: str) -> str:
 
 **Step 3:** Add the subagent definition in YAML
 
-In `agents/subagents.yml`:
+In `orchestrators/subagents.yml`:
 
 ```yaml
 subagents:
@@ -182,7 +182,7 @@ subagents:
 
 **Step 4:** Wire it into an orchestrator
 
-In `agents/orchestrators.yml`, under the orchestrator's `subagents:` list:
+In `orchestrators/orchestrators.yml`, under the orchestrator's `subagents:` list:
 
 ```yaml
 orchestrators:
@@ -217,8 +217,8 @@ The architecture uses a **3-layer contract** to keep each new MCP source minimal
 
 ```
 Layer 1: tools/<name>.py      — MCPConnectionConfig + create function (~5 lines)
-Layer 2: agents/<name>.py     — USAGE_GUIDE string only
-Layer 3: loader.py, YAML      — MCP_SOURCE_MAP entry + subagents.yml + orchestrators.yml
+Layer 2: subagents/<name>.py     — USAGE_GUIDE string only
+Layer 3: subagents/loader.py, YAML — MCP_SOURCE_MAP entry + subagents.yml + orchestrators.yml
 ```
 
 ### Step-by-step: Add a Slack MCP server
@@ -246,7 +246,7 @@ The `MCPConnectionConfig` dataclass accepts:
 - `headers` — extra HTTP headers (optional)
 - `verify` — SSL verification: `True` (default), `False` (skip), or a path to a CA bundle
 
-**Step 2:** Create `src/agentbankz/agents/slack.py`
+**Step 2:** Create `src/agentbankz/subagents/slack.py`
 
 ```python
 SLACK_USAGE_GUIDE = """Rules for Slack:
@@ -263,10 +263,10 @@ SLACK_USAGE_GUIDE = """Rules for Slack:
 
 **Step 3:** Register in `MCP_SOURCE_MAP`
 
-In `src/agentbankz/agents/loader.py`:
+In `src/agentbankz/subagents/loader.py`:
 
 ```python
-from agentbankz.agents.slack import SLACK_USAGE_GUIDE
+from agentbankz.subagents.slack import SLACK_USAGE_GUIDE
 
 MCP_SOURCE_MAP: dict[str, dict[str, Any]] = {
     "zapier": {"guide": GMAIL_ZAPIER_USAGE_GUIDE, "prefix": "gmail"},
@@ -277,7 +277,7 @@ MCP_SOURCE_MAP: dict[str, dict[str, Any]] = {
 
 **Step 4:** Add YAML entry
 
-In `src/agentbankz/agents/subagents.yml`:
+In `src/agentbankz/orchestrators/subagents.yml`:
 
 ```yaml
   slack:
@@ -289,7 +289,7 @@ In `src/agentbankz/agents/subagents.yml`:
 
 **Step 5:** Add to orchestrator
 
-In `src/agentbankz/agents/orchestrators.yml`:
+In `src/agentbankz/orchestrators/orchestrators.yml`:
 
 ```yaml
 orchestrators:
@@ -338,7 +338,7 @@ The adapter handles:
 - Streaming HTTP transport via `fastmcp`
 - Auto-generated LangChain `StructuredTool` wrappers
 
-The generic builder `agents/mcp_builder.py::build_mcp_subagents()` creates one `SubAgent` per tool with naming `{prefix}_{tool_name}`, injecting the `USAGE_GUIDE` into each subagent's system prompt. This is shared by ALL MCP sources — no per-source builder function needed.
+The generic builder `subagents/mcp_builder.py::build_mcp_subagents()` creates one `SubAgent` per tool with naming `{prefix}_{tool_name}`, injecting the `USAGE_GUIDE` into each subagent's system prompt. This is shared by ALL MCP sources — no per-source builder function needed.
 
 ---
 
@@ -348,7 +348,7 @@ An orchestrator is a fully independent agent with its own model, backend, tools,
 
 ### Example: Add a `gmail_assistant` orchestrator
 
-**Step 1:** Define it in `agents/orchestrators.yml`
+**Step 1:** Define it in `orchestrators/orchestrators.yml`
 
 ```yaml
 orchestrators:
@@ -461,7 +461,7 @@ if name.endswith(":*"):
     )
 ```
 
-This is why `build_mcp_subagents()` in `agents/mcp_builder.py` names subagents `{prefix}_{tool_name}`:
+This is why `build_mcp_subagents()` in `subagents/mcp_builder.py` names subagents `{prefix}_{tool_name}`:
 - `prefix="gmail"` → `gmail_message`, `gmail_delete_email`, etc.
 - `prefix="obsidian"` → `obsidian_vault_read`, `obsidian_vault_write`, etc.
 
@@ -778,8 +778,8 @@ uv run python -m compileall main.py src
 
 # 2. Check all imports resolve
 uv run python -c "
-from agentbankz.agents import OrchestratorFactory
-from agentbankz.agents.gmail import build_gmail_subagents
+from agentbankz.orchestrators import OrchestratorFactory
+from agentbankz.subagents.gmail import GMAIL_ZAPIER_USAGE_GUIDE
 from agentbankz.backends import BackendFactory
 from agentbankz.tools.knowledge import index_python_chunk, retrieve_python_knowledge, delete_python_knowledge, update_or_upsert_knowledge, inspect_collection_stats
 print('All imports OK')
@@ -787,8 +787,8 @@ print('All imports OK')
 
 # 3. Check the YAML config loads correctly
 uv run python -c "
-from agentbankz.agents.loader import load_agent_configs
-cfg = load_agent_configs('src/agentbankz/agents')
+from agentbankz.subagents.loader import load_agent_configs
+cfg = load_agent_configs('src/agentbankz/orchestrators')
 print('Model:', cfg.get('model'))
 print('Subagents:', list(cfg.get('subagents', {}).keys()))
 print('Orchestrators:', list(cfg.get('orchestrators', {}).keys()))
@@ -809,7 +809,7 @@ Steps to add a brand new orchestrator (e.g. `code_analyzer`):
 
 ### 1. Define new subagents (if needed)
 
-Add them to `agents/subagents.yml`:
+Add them to `orchestrators/subagents.yml`:
 
 ```yaml
 subagents:
@@ -834,7 +834,7 @@ If you don't need new subagents, skip this step — you can reuse any existing o
 
 ### 2. Define the orchestrator
 
-Add it to `agents/orchestrators.yml`:
+Add it to `orchestrators/orchestrators.yml`:
 
 ```yaml
 orchestrators:
@@ -888,19 +888,19 @@ If your orchestrator needs a completely different storage strategy, create a new
 | What you want to do | File to edit |
 |---|---|
 | Add a new tool function | `src/agentbankz/tools/knowledge.py` |
-| Register a tool so YAML can find it | `src/agentbankz/agents/loader.py` (add to `STATIC_TOOL_MAP`) |
-| Add/remove a subagent | `src/agentbankz/agents/subagents.yml` |
-| Add/remove an orchestrator | `src/agentbankz/agents/orchestrators.yml` |
-| Change a subagent system prompt | `src/agentbankz/agents/subagents.yml` |
-| Change the orchestrator system prompt | `src/agentbankz/agents/orchestrators.yml` |
-| Change the default model | `src/agentbankz/agents/defaults.yml` |
-| Override model per orchestrator | `src/agentbankz/agents/orchestrators.yml` |
-| Add a new MCP server source | Create `tools/<name>.py` (config) + `agents/<name>.py` (guide) + update `loader.py` (MCP_SOURCE_MAP) + `main.py` |
+| Register a tool so YAML can find it | `src/agentbankz/subagents/loader.py` (add to `STATIC_TOOL_MAP`) |
+| Add/remove a subagent | `src/agentbankz/orchestrators/subagents.yml` |
+| Add/remove an orchestrator | `src/agentbankz/orchestrators/orchestrators.yml` |
+| Change a subagent system prompt | `src/agentbankz/orchestrators/subagents.yml` |
+| Change the orchestrator system prompt | `src/agentbankz/orchestrators/orchestrators.yml` |
+| Change the default model | `src/agentbankz/orchestrators/defaults.yml` |
+| Override model per orchestrator | `src/agentbankz/orchestrators/orchestrators.yml` |
+| Add a new MCP server source | Create `tools/<name>.py` (config) + `subagents/<name>.py` (guide) + update `subagents/loader.py` (MCP_SOURCE_MAP) + `main.py` |
 | Add a new storage backend | Create `backends/<name>.py` + update `backends/factory.py` |
 | Change the entry point | `main.py` (~7 lines, rarely touched) |
 | Change MCP adapter behavior (all sources) | `src/agentbankz/tools/mcp_adapter.py` |
 | Change Zapier connection | `src/agentbankz/tools/zapier.py` |
-| Change Gmail subagent prompts | `src/agentbankz/agents/gmail.py` (GMAIL_ZAPIER_USAGE_GUIDE) |
-| Change Obsidian subagent prompts | `src/agentbankz/agents/obsidian.py` (OBSIDIAN_USAGE_GUIDE) |
+| Change Gmail subagent prompts | `src/agentbankz/subagents/gmail.py` (GMAIL_ZAPIER_USAGE_GUIDE) |
+| Change Obsidian subagent prompts | `src/agentbankz/subagents/obsidian.py` (OBSIDIAN_USAGE_GUIDE) |
 | Add a dependency | `pyproject.toml` (then `uv sync`) |
 | Add a secret | `.env` |

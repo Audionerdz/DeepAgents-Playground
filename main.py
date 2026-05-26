@@ -2,7 +2,7 @@
 import os
 import sys
 
-from agentbankz.agents import OrchestratorFactory
+from agentbankz.orchestrators import OrchestratorFactory
 from agentbankz.backends import BackendFactory
 from agentbankz.tools.obsidian import create_obsidian_tools
 from agentbankz.tools.zapier import create_zapier_tools

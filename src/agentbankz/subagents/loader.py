@@ -4,9 +4,9 @@ from typing import Any
 import yaml
 from deepagents.middleware.subagents import SubAgent
 
-from agentbankz.agents.mcp_builder import build_mcp_subagents
-from agentbankz.agents.gmail import GMAIL_ZAPIER_USAGE_GUIDE
-from agentbankz.agents.obsidian import OBSIDIAN_USAGE_GUIDE
+from agentbankz.subagents.mcp_builder import build_mcp_subagents
+from agentbankz.subagents.gmail import GMAIL_ZAPIER_USAGE_GUIDE
+from agentbankz.subagents.obsidian import OBSIDIAN_USAGE_GUIDE
 from agentbankz.tools.knowledge import (
     delete_python_knowledge,
     index_python_chunk,
