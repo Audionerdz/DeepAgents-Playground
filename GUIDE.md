@@ -81,7 +81,7 @@ cfg = load_agent_configs("src/agentbankz/orchestrators")
 
 **Key rule:** Every name must match. The name in `subagents.yml` (YAML key) is referenced in the orchestrator's `subagents:` list.
 
-**Backward compat:** If `defaults.yml` or `subagents.yml` don't exist, the loader falls back to a single monolithic `orchestrators.yml` containing all three sections.
+**Backward compat:** If the split layout (`orchestrators/defaults.yml` + `orchestrators/orchestrators.yml` + `subagents/subagents.yml`) is absent, the loader falls back to a single monolithic `orchestrators.yml`.
 
 ---
 
@@ -164,7 +164,7 @@ def summarize_knowledge(query: str) -> str:
 
 **Step 3:** Add the subagent definition in YAML
 
-In `orchestrators/subagents.yml`:
+In `subagents/subagents.yml`:
 
 ```yaml
 subagents:
@@ -218,7 +218,7 @@ The architecture uses a **3-layer contract** to keep each new MCP source minimal
 ```
 Layer 1: tools/<name>.py      — MCPConnectionConfig + create function (~5 lines)
 Layer 2: subagents/<name>.py     — USAGE_GUIDE string only
-Layer 3: subagents/loader.py, YAML — MCP_SOURCE_MAP entry + subagents.yml + orchestrators.yml
+Layer 3: subagents/loader.py, YAML — MCP_SOURCE_MAP entry + subagents/subagents.yml + orchestrators/orchestrators.yml
 ```
 
 ### Step-by-step: Add a Slack MCP server
@@ -277,7 +277,7 @@ MCP_SOURCE_MAP: dict[str, dict[str, Any]] = {
 
 **Step 4:** Add YAML entry
 
-In `src/agentbankz/orchestrators/subagents.yml`:
+In `src/agentbankz/subagents/subagents.yml`:
 
 ```yaml
   slack:
@@ -809,7 +809,7 @@ Steps to add a brand new orchestrator (e.g. `code_analyzer`):
 
 ### 1. Define new subagents (if needed)
 
-Add them to `orchestrators/subagents.yml`:
+Add them to `subagents/subagents.yml`:
 
 ```yaml
 subagents:
@@ -889,9 +889,9 @@ If your orchestrator needs a completely different storage strategy, create a new
 |---|---|
 | Add a new tool function | `src/agentbankz/tools/knowledge.py` |
 | Register a tool so YAML can find it | `src/agentbankz/subagents/loader.py` (add to `STATIC_TOOL_MAP`) |
-| Add/remove a subagent | `src/agentbankz/orchestrators/subagents.yml` |
+| Add/remove a subagent | `src/agentbankz/subagents/subagents.yml` |
 | Add/remove an orchestrator | `src/agentbankz/orchestrators/orchestrators.yml` |
-| Change a subagent system prompt | `src/agentbankz/orchestrators/subagents.yml` |
+| Change a subagent system prompt | `src/agentbankz/subagents/subagents.yml` |
 | Change the orchestrator system prompt | `src/agentbankz/orchestrators/orchestrators.yml` |
 | Change the default model | `src/agentbankz/orchestrators/defaults.yml` |
 | Override model per orchestrator | `src/agentbankz/orchestrators/orchestrators.yml` |

@@ -20,7 +20,7 @@ class OrchestratorFactory:
         zapier_tools: list[Any] | None = None,
         mcp_tools_map: dict[str, list[Any]] | None = None,
     ) -> None:
-        config_dir = config_dir or Path(__file__).parent
+        config_dir = config_dir or Path(__file__).parent.parent
         self.config = load_agent_configs(config_dir)
         self.tool_map = {**STATIC_TOOL_MAP, **(tool_map or {})}
         self.mcp_tools_map = dict(mcp_tools_map or {})

@@ -18,11 +18,11 @@ DeepAgents-Playground/
 │   │   ├── __init__.py                  #   Exports: OrchestratorFactory
 │   │   ├── orchestrator_factory.py      #   Factory: reads YAML → create_deep_agent()
 │   │   ├── defaults.yml                 #   YAML: default model config
-│   │   ├── orchestrators.yml            #   YAML: orchestrator definitions (refs subagents)
-│   │   └── subagents.yml                #   YAML: declarative subagent definitions
+│   │   ├── orchestrators.yml            #   YAML: orchestrator definitions
 │   │
 │   ├── subagents/                       # ██ SUBAGENT SYSTEM ██
 │   │   ├── __init__.py                  #   Exports: build_mcp_subagents, usage guides
+│   │   ├── subagents.yml                #   YAML: declarative subagent definitions
 │   │   ├── loader.py                    #   Resolver: YAML config → SubAgent objects
 │   │   ├── mcp_builder.py               #   Generic MCP SubAgent builder
 │   │   ├── gmail.py                     #   Gmail usage guide constant
@@ -216,7 +216,7 @@ STATIC_TOOL_MAP = {
 
 ### Step 3: Define the subagent in YAML
 
-In `orchestrators/subagents.yml`:
+In `subagents/subagents.yml`:
 
 ```yaml
 subagents:
@@ -266,7 +266,7 @@ def build_slack_subagents(slack_tools: list, model: str) -> list[SubAgent]:
 
 ### Step 2: Register in the YAML
 
-In `orchestrators/subagents.yml`:
+In `subagents/subagents.yml`:
 
 ```yaml
 subagents:
@@ -410,7 +410,7 @@ def cached_zapier_call(action: str, params: tuple) -> Any:
 
 ## 9. Configuration Reference
 
-The config is split across **3 files** under `orchestrators/`. The loader merges them automatically:
+The config is split across **3 files** — `orchestrators/defaults.yml`, `orchestrators/orchestrators.yml`, and `subagents/subagents.yml`. The loader merges them automatically:
 
 ### `orchestrators/defaults.yml`
 
@@ -418,7 +418,7 @@ The config is split across **3 files** under `orchestrators/`. The loader merges
 model: str                                    # Default model for all subagents
 ```
 
-### `orchestrators/subagents.yml`
+### `subagents/subagents.yml`
 
 ```yaml
 subagents:                                     # SubAgent definitions
@@ -451,7 +451,7 @@ python:*   → matches all subagents with prefix "python_"
 
 ### Backward compatibility
 
-If `defaults.yml` or `subagents.yml` are missing, `load_agent_configs()` falls back to a single monolithic `orchestrators.yml` containing all three sections.
+If the split layout (`orchestrators/defaults.yml` + `orchestrators/orchestrators.yml` + `subagents/subagents.yml`) is absent, `load_agent_configs()` falls back to a single monolithic `orchestrators.yml` in the config directory.
 
 ---
 
@@ -461,7 +461,7 @@ If `defaults.yml` or `subagents.yml` are missing, `load_agent_configs()` falls b
 |---|---|---|
 | `main.py` | Entry point (7 lines) | Never (architectural glue) |
 | `orchestrators/defaults.yml` | Default model config | Changing the default LLM model |
-| `orchestrators/subagents.yml` | SubAgent definitions | Adding/removing subagents |
+| `subagents/subagents.yml` | SubAgent definitions | Adding/removing subagents |
 | `orchestrators/orchestrators.yml` | Orchestrator definitions | Adding/removing orchestrators |
 | `orchestrators/orchestrator_factory.py` | `create_deep_agent()` from config | Adding new orchestrator features |
 | `subagents/loader.py` | YAML → SubAgent resolution | Adding new `source:` types |

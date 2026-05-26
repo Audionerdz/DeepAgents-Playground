@@ -49,43 +49,41 @@ def load_yaml_config(path: str | Path) -> dict[str, Any]:
         return yaml.safe_load(file) or {}
 
 
-DEF_FILENAMES = ["defaults.yml", "subagents.yml", "orchestrators.yml"]
-
-
 def load_agent_configs(
     config_dir: str | Path,
 ) -> dict[str, Any]:
-    """Load defaults.yml + subagents.yml + orchestrators.yml and merge into one dict.
+    """Load defaults.yml + orchestrators.yml from config_dir/orchestrators/
+    and subagents.yml from config_dir/subagents/, then merge into one dict.
 
-    If the multi-file split doesn't exist, falls back to a single
-    ``orchestrators.yml`` (backward compat with monolithic config).
+    Falls back to a monolithic ``config_dir/orchestrators.yml`` if the
+    split layout is absent (backward compat).
     """
     config_dir = Path(config_dir)
 
-    # Check if multi-file split exists
-    multi_file_exists = all(
-        config_dir.joinpath(fname).exists() for fname in DEF_FILENAMES
-    )
+    defaults_path = config_dir / "orchestrators" / "defaults.yml"
+    orchestrators_path = config_dir / "orchestrators" / "orchestrators.yml"
+    subagents_path = config_dir / "subagents" / "subagents.yml"
 
-    if multi_file_exists:
+    split_exists = all(p.exists() for p in [defaults_path, orchestrators_path, subagents_path])
+
+    if split_exists:
         config: dict[str, Any] = {}
-        for fname in DEF_FILENAMES:
-            partial = load_yaml_config(config_dir / fname)
-            config.update(partial)
-        # Ensure top-level keys exist even if empty
+        config.update(load_yaml_config(defaults_path))
+        config.update(load_yaml_config(orchestrators_path))
+        config.update(load_yaml_config(subagents_path))
         config.setdefault("model", "openai:gpt-5.4-nano")
         config.setdefault("subagents", {})
         config.setdefault("orchestrators", {})
         return config
 
-    # Fallback: single monolithic orchestrators.yml
     fallback = config_dir / "orchestrators.yml"
     if fallback.exists():
         return load_yaml_config(fallback)
 
     raise FileNotFoundError(
         f"No agent config found in {config_dir}. Expected either "
-        f"{DEF_FILENAMES} or a monolithic orchestrators.yml."
+        f"defaults.yml + orchestrators.yml in orchestrators/ + "
+        f"subagents.yml in subagents/, or a monolithic orchestrators.yml."
     )
 
 
